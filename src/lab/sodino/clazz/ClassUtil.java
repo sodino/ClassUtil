@@ -17,6 +17,12 @@ import java.util.jar.JarFile;
  * 并可设置是否遍历该包名下的子包的类名.<br/>
  * 并可通过Annotation(内注)来过滤，避免一些内部类的干扰.<br/>
  * 
+ * 通过Thread.currentThread().getContextClassLoader()获取ClassLoader实例
+ * 将包名转为路径名后，做为参数传给CloassLoader.getResources()，以得到该路径下所有资源的URL;
+ * 通过URL.getProtocol()方法，判断资源是在本地(file:)或是第三方jar包(jar:)内;
+ * 在本地的类直接文件遍历即可;
+ * 第三方jar则通过URL.openConnection()得到JarURLConnection，再通过JarURLConnection.getJarFile()获得JarFile,最后遍历该JarFile的item即可。
+ * 
  * @author Sodino E-mail:sodino@qq.com
  * @version Time：2014年2月10日 下午3:55:59
  */
@@ -97,6 +103,7 @@ public class ClassUtil {
 	
 	/**
 	 * 第三方Jar类库的引用。<br/>
+	 * 
 	 * @throws IOException 
 	 * */
 	public static void findClassName(List<Class<?>> clazzList, String pkgName, URL url, boolean isRecursive, Class<? extends Annotation> annotation) throws IOException {
